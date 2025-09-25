@@ -18,8 +18,13 @@ class LogAnalyzer:
     # it doesn't add any code complexity and would allow for intermediate testing
     def list_active_users(self, window_size: int, current_time: int) -> List[str]:
         active_users = []
-        start = current_time - window_size + 1
-        end = current_time + 1 
+
+        # to deal with (large) floating windows, we make sure we aren't going beyond the window
+        start = max(current_time - window_size + 1, min(self.events.keys))
+        end = min(current_time + 1, max(self.events.keys) + 1)
+
+        # checking every value in range is only because of in memory event storage
+        # in reality, we would probably have a query that pulled the events from a database
         for i in range(start, end):
             ct_users = self.events.get(i)
 
